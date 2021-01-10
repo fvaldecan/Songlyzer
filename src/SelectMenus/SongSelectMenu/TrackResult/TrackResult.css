@@ -1,0 +1,12 @@
+.search-result {
+  display: block;
+  color: #232b2b;
+}
+
+.add-track-button {
+  display: flex;
+}
+.add-track-button:hover {
+  opacity: 0.5;
+  background-color: "#232B2B";
+}

@@ -1,0 +1,49 @@
+.song-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 18vh;
+  width: 18vh;
+  transition: all 0.3s ease-in-out;
+}
+.song-button:hover {
+  transform: scale(1.1, 1.1);
+}
+.song-button .remove-song-button {
+  display: none;
+}
+.song-button:hover .remove-song-button {
+  display: block;
+  position: absolute;
+  top: -2%;
+  right: -2%;
+}
+.song-button-disc {
+  position: relative;
+  font-size: 1.5vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 18vh;
+  width: 18vh;
+  background-color: #232b2b;
+  border-radius: 50%;
+  transition: all 0.3s ease-in-out;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+.song-button-disc:hover {
+  background-color: #232b2b;
+  color: black;
+  height: 18vh;
+  width: 18vh;
+  border-radius: 50%;
+  opacity: 0.8;
+  cursor: pointer;
+}
+.remove-song-button:hover {
+  transform: scale(1.1, 1.1);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}

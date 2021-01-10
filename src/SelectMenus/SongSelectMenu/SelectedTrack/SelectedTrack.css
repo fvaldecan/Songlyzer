@@ -1,0 +1,12 @@
+.selected-track {
+  display: block;
+  background-color: #e7e7e7;
+  color: #232b2b;
+}
+.remove-track-button {
+  display: flex;
+}
+.remove-track-button:hover {
+  opacity: 0.5;
+  background-color: "#232B2B";
+}
