@@ -156,7 +156,7 @@ export default class SongSelect extends Component {
           <button
             type="submit"
             id="add-selected-tracks"
-            class="add-selected-tracks"
+            className="add-selected-tracks"
             onClick={this.props.onSubmit.bind(this, selected_tracks)}
           >
             Add Song
