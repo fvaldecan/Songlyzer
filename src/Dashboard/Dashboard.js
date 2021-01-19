@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import AddWidget from "./AddWidget/AddWidget";
+import {useSelector} from 'react-redux';
 import "./Dashboard.css";
 const DasboardButtons = () => {
   return (
