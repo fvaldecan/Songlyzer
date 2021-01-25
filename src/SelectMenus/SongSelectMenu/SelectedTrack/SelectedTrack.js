@@ -14,7 +14,7 @@ const SelectedTrack = ({ track, trackRemoveButton }) => {
       <RemoveCircleIcon
         className="remove-track-button"
         style={removeTrackButton}
-        onClick={trackRemoveButton.bind(this, track)}
+        onClick={() => trackRemoveButton(track)}
       />
     </li>
   );

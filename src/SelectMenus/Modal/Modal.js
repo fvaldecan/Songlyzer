@@ -4,12 +4,15 @@ import SongSelect from "../SongSelectMenu/SongSelect";
 import WidgetSelect from "../WidgetSelectMenu/WidgetSelect";
 import FocusTrap from "focus-trap-react";
 import "./Modal.css";
+import { useDispatch } from "react-redux";
+import ErrorModal from "../Error/ErrorModal";
 
 export const Modal = ({
-  onClickOutside,
+  modalType,
+  // onClickOutside,
   modalRef,
   buttonRef,
-  closeModal,
+  // closeModal,
   onSubmitSong,
   menuType,
   songMap,
@@ -18,6 +21,24 @@ export const Modal = ({
   isSingle,
   onSubmitWidget,
 }) => {
+  const dispatch = useDispatch();
+  const toggleScrollLock = () => {
+    document.querySelector("html").classList.toggle("scroll-lock");
+  };
+  const closeModal = () => {
+    dispatch({
+      type: "CLOSE_MODAL",
+      payload: {
+        showModal: false,
+      },
+    });
+    toggleScrollLock();
+  };
+
+  // const onClickOutside = (event) => {
+  //   if (this.modal && this.modal.contains(event.target)) return;
+  //   closeModal();
+  // };
   return ReactDOM.createPortal(
     <FocusTrap>
       <aside
@@ -26,7 +47,7 @@ export const Modal = ({
         tabIndex="-1"
         aria-modal="true"
         className="modal-cover"
-        onClick={onClickOutside}
+        // onClick={onClickOutside}
       >
         <div className="modal-area" ref={modalRef}>
           <button
@@ -44,20 +65,12 @@ export const Modal = ({
             </svg>
           </button>
           <div className="modal-body">
-            {menuType === "song" ? (
-              <SongSelect
-                onSubmit={onSubmitSong}
-                song_map={songMap}
-                // song_list={songList}
-              />
+            {modalType === "song" ? (
+              <SongSelect />
+            ) : modalType === "widget" ? (
+              <WidgetSelect />
             ) : (
-              <WidgetSelect
-                song_map={songMap}
-                // song_list={songList}
-                current_single_song={currentSingleSong}
-                is_single={isSingle}
-                onSubmit={onSubmitWidget}
-              />
+              <ErrorModal />
             )}
           </div>
         </div>

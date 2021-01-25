@@ -18,7 +18,7 @@ const TrackResult = ({ track, trackSelectButton, showAddButton }) => {
           // bind the components trackSelectButton method
           // and use the bind syntax that prepends
           // arguments to attach the item argument
-          onClick={trackSelectButton.bind(this, track)}
+          onClick={() => trackSelectButton(track)}
         />
       ) : null}
     </li>

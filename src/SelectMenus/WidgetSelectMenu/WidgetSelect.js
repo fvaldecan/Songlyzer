@@ -1,154 +1,190 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import VisualOptions from "./VisualOptions/VisualOptions";
 import FeatureOptions from "./FeatureOptions/FeatureOptions";
+import { useDispatch, useSelector } from "react-redux";
+import Widget from "../../Dashboard/Widget/Widget";
+import { DefaultFeatures, DefaultVisuals, features } from "../../constants";
 
-export default class WidgetSelect extends Component {
-  constructor(props) {
-    console.log("Rendering Widget Select Menu...");
-    super(props);
-    this.state = {
-      current_single_song: this.props.current_single_song,
-      song_map: this.props.song_map,
-      is_single: this.props.is_single,
-      widget: Component,
-      features_selected: [],
-      features: {
-        basic: {
-          options: ["song_title", "album_title", "artist_name"],
-          disabled: false,
-        },
-        details: {
-          options: [
-            "album_type",
-            "track_number",
-            "release_date",
-            "key",
-            "duration",
-            "explicit",
-          ],
-          disabled: false,
-        },
-        audio_features: {
-          options: [
-            "acousticness",
-            "danceability",
-            "energy",
-            "happiness",
-            "liveness",
-            "loudness",
-            "popularity",
-            "sadness",
-            "speechiness",
-            "tempo",
-          ],
-          disabled: false,
-        },
-      },
-      visuals: {
-        plain_text: { options: "plain_text", disabled: false },
-        bar: { options: "bar", disabled: false },
-        radix: { options: "radix", disaled: false },
-      },
-    };
-  }
-  addToSelectedFeatures = (feature) => {
-    let new_features_selected = this.state.features_selected;
-    new_features_selected.push(feature);
-    return new_features_selected;
+const defaultFeatures = [...DefaultFeatures];
+const defaultVisuals = [...DefaultVisuals];
+// Test
+const testSelectedAllFeatures = features;
+const testPlainText = "plain";
+const WidgetSelect = () => {
+  const currentSong = useSelector((state) => state.currentSong);
+  const songList = useSelector((state) => state.songList);
+  const dashboardState = useSelector((state) => state.dashboard);
+  const dispatch = useDispatch();
+  const [featuresSelected, setFeaturesSelected] = useState([]);
+  const [visualSelected, setVisualSelected] = useState("");
+  const [features, setFeatures] = useState(defaultFeatures);
+  const [visuals, setVisuals] = useState(defaultVisuals);
+
+  const addToSelectedFeatures = (feature) => {
+    let newFeaturesSelected = featuresSelected;
+    newFeaturesSelected.push(feature);
+    return newFeaturesSelected;
   };
-  removeFromSelectedFeatures = (feature) => {
-    let new_features_selected = this.state.features_selected.filter(
+  const removeFromSelectedFeatures = (feature) => {
+    let newFeaturesSelected = featuresSelected.filter(
       (feat) => feat !== feature
     );
-    return new_features_selected;
+    return newFeaturesSelected;
   };
-  // disableSelection = (selection) => {};
-  // enableSelection = (selection) => {};
-  handleCheckboxOptions = (event) => {
-    const {
-      features: { basic, details, audio_features },
-      visuals: { plain_text, bar, radix },
-      features_selected,
-    } = this.state;
-    const feature_is_checked = event.target.checked;
-    const feature_selected = event.target.value;
-    const old_featuers_selected_length = features_selected.length;
-    const new_features_selected = feature_is_checked
-      ? this.addToSelectedFeatures(feature_selected)
-      : this.removeFromSelectedFeatures(feature_selected);
-    const isStringFeature = () => {
-      // True if features selected are 'basic' or 'details'
-      return (
-        new_features_selected.every((feature) =>
-          basic.options.includes(feature)
-        ) ||
-        new_features_selected.every((feature) =>
-          details.options.includes(feature)
-        ) ||
-        feature_selected === "plain_text"
+  const handleCheckboxOptions = (event) => {
+    // Disable/enable checkboxes accordingly
+    // e.g Checking Song Title and Danceability means you're only allowed to click on Plain Text Widget
+    const checked = event.target.value;
+    const isChecked = event.target.checked;
+    const featureNames = features.map((feature) => feature.name);
+    const checkedType = featureNames.includes(checked) ? "feature" : "visual";
+    if (!isChecked) {
+      if (checkedType === "visual") {
+        // Reset Visual Charts State
+        setVisualSelected("");
+        let newVisualsState = [];
+        for (let chart of visuals) {
+          chart.disabled = false;
+          newVisualsState.push(chart);
+        }
+        setVisuals(newVisualsState);
+
+        // Reset Features State
+        let newFeaturesState = [];
+        for (let feature of features) {
+          feature.disabled = false;
+          newFeaturesState.push(feature);
+        }
+        setFeatures(newFeaturesState);
+      } else {
+        const newFeaturesSelected = removeFromSelectedFeatures(checked);
+        setFeaturesSelected(newFeaturesSelected);
+        const newVisualsState = [];
+        for (let chart of visuals) {
+          chart.disabled = !newFeaturesSelected.every((
+            feature // Disables/enables the chart with new selected features
+          ) => chart.features.includes(feature));
+          newVisualsState.push(chart);
+        }
+        setVisuals(newVisualsState);
+      }
+    } else {
+      if (checkedType === "visual") {
+        // Checked is a visual chart
+
+        // Find what features we're able to use with visual chart
+        let visualFeatures = [];
+        for (let chart of visuals) {
+          if (chart.name === checked) {
+            visualFeatures = chart.features;
+          }
+        }
+
+        if (
+          !featuresSelected || //If features aren't selected
+          (!visualSelected &&
+            featuresSelected.every((feature) =>
+              visualFeatures.includes(feature)
+            )) // If visual chart selected corresponds with features
+        ) {
+          // Disable other Visual Charts
+          let newVisualsState = [];
+          for (let chart of visuals) {
+            if (chart.name !== checked) {
+              chart.disabled = true;
+            }
+            newVisualsState.push(chart);
+          }
+          setVisuals(newVisualsState);
+          setVisualSelected(checked);
+
+          let newFeaturesState = [];
+          for (let feature of features) {
+            feature.disabled = !visualFeatures.includes(feature.name); // Disables/enables the features depending on selected chart
+            newFeaturesState.push(feature);
+          }
+          setFeatures(newFeaturesState);
+        }
+      } else {
+        // Checked is a feature
+        let visualFeatures = [];
+        for (let chart of visuals) {
+          if (chart.name === visualSelected) {
+            visualFeatures = chart.features;
+          }
+        }
+        if (
+          !visualSelected || //If visual chart not selected
+          (visualSelected && visualFeatures.includes(checked)) //If feature selected okay with chart selected
+        ) {
+          const newFeaturesSelected = addToSelectedFeatures(checked);
+          setFeaturesSelected(newFeaturesSelected);
+
+          const newVisualsState = [];
+          for (let chart of visuals) {
+            const chartFeatures = chart.features;
+            chart.disabled = !newFeaturesSelected.every((
+              feature // Disables/enables the chart with new selected features
+            ) => chartFeatures.includes(feature));
+            newVisualsState.push(chart);
+          }
+          setVisuals(newVisualsState);
+        }
+      }
+    }
+  };
+
+  const handleSubmitWidget = (event) => {
+    event.preventDefault();
+    // console.log(featuresSelected, features, visualSelected, visuals);
+    if (!visualSelected) {
+      alert("Select a Chart");
+    } else if (featuresSelected.length < 1) {
+      alert("Select a Feature");
+    } else {
+      const numWidgets = currentSong.widgets.length; // Use count as component key
+      let newWidget = (
+        <Widget
+          key={`widget${numWidgets + 1}`}
+          featuresSelected={featuresSelected}
+          visualsSelected={visualSelected}
+        />
       );
-    };
-    if (new_features_selected.length === 0) {
-      basic.disabled = false;
-      details.disabled = false;
-      audio_features.disabled = false;
-      plain_text.disabled = false;
-      bar.disabled = false;
-      radix.disabled = false;
-      this.setState({
-        basic: basic,
-        details: details,
-        audio_features: audio_features,
-        plain_text: plain_text,
-        bar: bar,
-        radix: radix,
+      const newPayload = {
+        data: currentSong.data,
+        widgets: [...currentSong.widgets, newWidget],
+      };
+      dispatch({
+        type: "CHANGE_CURRENT_SONG",
+        payload: { dashboardData: newPayload },
       });
-    } else if (
-      old_featuers_selected_length === 0 &&
-      new_features_selected.length > 0
-    ) {
-      // Only happens on completely new sets of selections
-      const is_string_feature = isStringFeature();
-      basic.disabled = !is_string_feature;
-      details.disabled = !is_string_feature;
-      audio_features.disabled = is_string_feature;
-      plain_text.disabled = !is_string_feature;
-      bar.disabled = is_string_feature;
-      radix.disabled = is_string_feature;
-      this.setState({
-        basic: basic,
-        details: details,
-        audio_features: audio_features,
-        plain_text: plain_text,
-        bar: bar,
-        radix: radix,
+      dispatch({
+        type: "ADD_TO_MAP",
+        payload: {
+          id: currentSong.data.id,
+          dashboardData: newPayload,
+        },
+      });
+      dispatch({
+        type: "CLOSE_MODAL",
       });
     }
-    this.setState({
-      features_selected: new_features_selected,
-    });
+    // console.log(DefaultFeatures);
+    // setFeatures(...DefaultFeatures);
+    // setVisuals(...DefaultVisuals);
   };
-  handleSubmitWidget = () => {};
-  //   handleCheckboxDisable = (value) => {
-  //     console.log(value);
-  //     console.log("TODO: DISABLE/ENABLE");
-  //   };
-  render() {
-    const { features, visuals } = this.state;
-    return (
-      <form>
-        <FeatureOptions
-          isChecked={this.handleCheckboxOptions}
-          features={features}
-        />
-        <VisualOptions
-          isChecked={this.handleCheckboxOptions}
-          visuals={visuals}
-        />
-        <button type="submit" onClick={() => this.handleSubmitWidget}>
-          Add Widget
-        </button>
-      </form>
-    );
-  }
-}
+  //TODO: SET ERRORS AT
+  //  - When trying to add wedget with chart selected but no features selected
+  // - When trying to add widget with features selected but no chart selected
+  // - When there's no songs on the sidebar
+  return (
+    <form>
+      <FeatureOptions isChecked={handleCheckboxOptions} features={features} />
+      <VisualOptions isChecked={handleCheckboxOptions} visuals={visuals} />
+      <button type="submit" onClick={handleSubmitWidget}>
+        Add Widget
+      </button>
+    </form>
+  );
+};
+export default WidgetSelect;

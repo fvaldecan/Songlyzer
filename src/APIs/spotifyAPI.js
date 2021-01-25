@@ -35,7 +35,7 @@ const SpotifyAPI = (function () {
         method: "GET",
         headers: { Authorization: "Bearer " + token },
       }
-    )
+    );
     const data = await result.json();
     return data.tracks.items;
   };
