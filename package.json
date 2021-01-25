@@ -1,6 +1,6 @@
 {
   "name": "songlyzer",
-  "homepage": "http://fvaldecan.github.io/songlyzer2",
+  "homepage": "http://fvaldecan.github.io/songlyzer",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
