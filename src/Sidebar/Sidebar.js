@@ -8,7 +8,7 @@ const Sidebar = () => {
   return (
     <aside>
       <header>
-        <h1>Songlyzr</h1>
+        <h1>Songlyzer</h1>
       </header>
       <div className="song-list">
         {songList.length > 0
