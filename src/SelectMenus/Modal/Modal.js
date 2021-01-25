@@ -5,6 +5,7 @@ import WidgetSelect from "../WidgetSelectMenu/WidgetSelect";
 import FocusTrap from "focus-trap-react";
 import "./Modal.css";
 import { useDispatch } from "react-redux";
+import ErrorModal from "../Error/ErrorModal";
 
 export const Modal = ({
   modalType,
@@ -66,14 +67,10 @@ export const Modal = ({
           <div className="modal-body">
             {modalType === "song" ? (
               <SongSelect />
+            ) : modalType === "widget" ? (
+              <WidgetSelect />
             ) : (
-              <WidgetSelect
-                song_map={songMap}
-                // song_list={songList}
-                current_single_song={currentSingleSong}
-                is_single={isSingle}
-                onSubmit={onSubmitWidget}
-              />
+              <ErrorModal />
             )}
           </div>
         </div>

@@ -1,10 +1,11 @@
-const Checkbox = ({ feature, isChecked, isDisabled }) => {
+const Checkbox = ({ feature, checked, isChecked, isDisabled }) => {
   let text = feature
     .split("_")
     .map((word) => {
       return word[0].toUpperCase() + word.substring(1);
     })
     .join(" ");
+  // console.log(isDisabled);
   return (
     <>
       <input
@@ -13,6 +14,7 @@ const Checkbox = ({ feature, isChecked, isDisabled }) => {
         id={feature}
         value={feature}
         disabled={isDisabled}
+        defaultChecked={checked}
       />
       <label htmlFor={feature}>{text}</label>
     </>

@@ -4,20 +4,85 @@ import SpotifyAPI from "../../APIs/spotifyAPI";
 import SearchBar from "./SearchBar/SearchBar";
 import TrackResult from "./TrackResult/TrackResult";
 import SelectedTrack from "./SelectedTrack/SelectedTrack";
-
+import { getRandomColor, getRandomDarkColor } from "../../helpers";
+import Lyrics from "song-lyrics-api";
+import { StaticColors } from "../../constants";
 const SongSelect = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedTracks, setSelectedTracks] = useState([]);
+  const [error, setError] = useState("");
   const songList = useSelector((state) => state.songList);
-  const spotifyToken = useSelector((state) => state.token);
+  // const spotifyToken = useSelector((state) => state.token);
   const songIds = songList.map((song) => song.id);
-  console.log(songIds);
   const dispatch = useDispatch();
-  const addSelectedTracks = () => {
+  const addAudioFeatures = async () => {
+    let newSelectedTracks = [];
+
+    for await (let track of selectedTracks) {
+      //Grab artist image
+      const spotifyToken = await SpotifyAPI.getToken();
+      const artist = await SpotifyAPI.getArtist(
+        track["artists"][0].id,
+        await spotifyToken
+      );
+      // console.log(artist);
+      //Assign a color to the song
+      const assignedColor = StaticColors.random(); //TODO: Different for dark mode and light mode
+
+      const artist_image = await artist["images"][0].url;
+      // console.log(artist_image);
+      //Adding Audio Features data
+      const audio_features = await SpotifyAPI.getAudioFeatures(
+        track.id,
+        await spotifyToken
+      );
+      // console.log(audio_features);
+      // const newLyrics = new Lyrics();
+      // const lyrics = await newLyrics.getLyrics(
+      //   `${track.name} ${track["artists"][0].name}`
+      // );
+      // console.log(lyrics);
+      await newSelectedTracks.push({
+        ...track,
+        ...audio_features,
+        artist_image: artist_image,
+        color: assignedColor,
+        // lyrics: lyrics,
+      });
+    }
+    return await newSelectedTracks;
+  };
+  const addSelectedTracks = async (event) => {
+    event.preventDefault();
+    const newSelectedTracks = await addAudioFeatures();
+    let newSongCount = 0;
+    for (let track of newSelectedTracks) {
+      // Add track to songIdToDashBoardReducer
+      console.log(track);
+      const payload = {
+        dashboardData: {
+          data: track,
+          widgets: [],
+        },
+        id: track.id,
+      };
+      if (newSongCount === 0) {
+        dispatch({
+          type: "CHANGE_CURRENT_SONG",
+          payload: { dashboardData: payload.dashboardData },
+        });
+      }
+      dispatch({
+        type: "ADD_TO_MAP",
+        payload: payload,
+      });
+      newSongCount += 1;
+    }
     dispatch({
-      type: "UPDATE_SONG_LIST",
-      payload: { newSongList: [...songList, ...selectedTracks] },
+      // Update in songListReducer
+      type: "ADD_TO_SONG_LIST",
+      payload: { newSongs: [...newSelectedTracks] },
     });
     dispatch({
       type: "CLOSE_MODAL",
@@ -28,6 +93,7 @@ const SongSelect = () => {
   };
   const handleSearchSubmit = async (event) => {
     event.preventDefault();
+    const spotifyToken = await SpotifyAPI.getToken();
     const newSearchResults = await SpotifyAPI.searchMusic(
       searchInput,
       await spotifyToken
@@ -76,7 +142,6 @@ const SongSelect = () => {
         <ul>
           {searchResults.map((track) => {
             const unique = !songIds.includes(track.id);
-            console.log(unique);
             return (
               <TrackResult
                 key={track.id}

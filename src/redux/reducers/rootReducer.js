@@ -4,6 +4,7 @@ import songIdToDashboardReducer from "./songIdToDashboardReducer";
 import modalReducer from "./modalReducer";
 import currentSongReducer from "./currentSongReducer";
 import tokenReducer from "./tokenReducer";
+import dashboardReducer from "./dashboardReducer";
 
 const rootReducer = combineReducers({
   songList: songListReducer,
@@ -11,5 +12,6 @@ const rootReducer = combineReducers({
   modal: modalReducer,
   currentSong: currentSongReducer,
   token: tokenReducer,
+  dashboardState: dashboardReducer,
 });
 export default rootReducer;

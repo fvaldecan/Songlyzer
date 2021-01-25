@@ -10,6 +10,7 @@ const App = () => {
   // const state = useSelector((state) => state);
   // const isSingleState = useSelector();
   const { showModal, modalType } = useSelector((state) => state.modal);
+  console.log(showModal, modalType);
   return (
     <div className="main-container">
       <Sidebar />
@@ -21,7 +22,7 @@ const App = () => {
       // onClickSong={this.onChangeCurrentSong}
       />
       <Dashboard /> */}
-      {/* <Dashboard /> */}
+      <Dashboard />
       {/* {single ? current_single_dashboard : merged_component} */}
       {showModal ? <Modal modalType={modalType} /> : null}
     </div>

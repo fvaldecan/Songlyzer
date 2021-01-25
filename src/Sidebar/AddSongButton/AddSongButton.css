@@ -3,8 +3,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 18vh;
-  width: 18vh;
+  height: 10vw;
+  width: 10vw;
   background-color: #fbfaf5;
   border-radius: 50%;
   cursor: pointer;

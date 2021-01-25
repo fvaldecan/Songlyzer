@@ -1,28 +1,20 @@
 import Checkbox from "../Checkbox/Checkbox";
-const VisualOptions = ({ visuals: { plain_text, bar, radix }, isChecked }) => {
+const VisualOptions = ({ visuals, isChecked }) => {
   return (
     <div>
-      Widget Options
+      <p>
+        <b>Widget Options</b>
+      </p>
       <ul>
-        <Checkbox
-          key={plain_text.options}
-          feature={plain_text.options}
-          isDisabled={plain_text.disabled}
-          isChecked={isChecked}
-        />
-
-        <Checkbox
-          key={bar.options}
-          feature={bar.options}
-          isDisabled={bar.disabled}
-          isChecked={isChecked}
-        />
-        <Checkbox
-          key={radix.options}
-          feature={radix.options}
-          isDisabled={radix.disabled}
-          isChecked={isChecked}
-        />
+        {visuals.map(({ name, disabled, checked }) => (
+          <Checkbox
+            key={name}
+            feature={name}
+            isDisabled={disabled}
+            isChecked={isChecked}
+            checked={checked}
+          />
+        ))}
       </ul>
     </div>
   );

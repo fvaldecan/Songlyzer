@@ -1,7 +1,8 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import "./SongButton.css";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Colors } from "../../constants";
 const styles = {
   removeSongButton: {
     color: "#eb5757",
@@ -38,10 +39,42 @@ const styles = {
 //   }
 // }
 const SongButton = ({ song }) => {
-  const { id, name, artists } = song;
-  const removeSong = () => {};
-  const onClickSong = () => {};
-  console.log(id, name, artists);
+  const currentSong = useSelector((state) => state.currentSong);
+  const songIdToDashboard = useSelector((state) => state.songIdToDashboard);
+  const songList = useSelector((state) => state.songList);
+  const { merge } = useSelector((state) => state.dashboardState);
+  const dispatch = useDispatch();
+  const { id, name, artists, color, album } = song;
+  const currentSongId = currentSong.data.id;
+  const removeSong = () => {
+    dispatch({
+      type: "REMOVE_FROM_SONG_LIST",
+      payload: { id: song.id },
+    });
+    dispatch({
+      type: "REMOVE_FROM_MAP",
+      payload: { id: song.id },
+    });
+    dispatch({
+      type: "CHANGE_CURRENT_SONG",
+      payload: {
+        dashboardData: songIdToDashboard[songList[songList.length - 1].id] || {
+          data: {},
+          widgets: [],
+        },
+      },
+    });
+  };
+  const onClickSong = () => {
+    dispatch({
+      type: "CHANGE_CURRENT_SONG",
+      payload: { dashboardData: songIdToDashboard[id] },
+    });
+  };
+  const activeDiscShadow =
+    merge || currentSongId === id ? `0px 0px 15px 0 ${color}` : "none";
+  // Add box shadow if we're at the merge state so we can know the color assignments or
+  // for when we're on the current song dashboard/click on the song
   return (
     <div className="song-button">
       <div className="remove-song-button">
@@ -51,12 +84,26 @@ const SongButton = ({ song }) => {
           style={styles.removeSongButton}
         />
       </div>
-      <div className="song-button-disc" onClick={onClickSong}>
-        <p>
+      <div
+        className="song-button-disc"
+        onClick={onClickSong}
+        style={{ boxShadow: activeDiscShadow }}
+      >
+        <img
+          style={{
+            height: "3vw",
+            width: "3vw",
+            borderRadius: "50%",
+            border: `2px solid #000000`,
+          }}
+          src={`${album.images[0].url}`}
+          alt={`${name}`}
+        ></img>
+        {/* <p>
           <b>{name}</b>
           <br />
           {artists[0].name}
-        </p>
+        </p> */}
       </div>
     </div>
   );

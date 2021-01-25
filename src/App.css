@@ -2,3 +2,10 @@
   display: flex;
   height: 100vh;
 }
+:root {
+  --primary: #fbfaf5;
+  --secondary: #e7e7e7;
+  --black: #232b2b;
+  --spotify: #1db954;
+  --red: #eb5757;
+}
