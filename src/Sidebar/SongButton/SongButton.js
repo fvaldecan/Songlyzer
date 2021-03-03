@@ -55,21 +55,29 @@ const SongButton = ({ song }) => {
       type: "REMOVE_FROM_MAP",
       payload: { id: song.id },
     });
-    dispatch({
-      type: "CHANGE_CURRENT_SONG",
-      payload: {
-        dashboardData: songIdToDashboard[songList[songList.length - 1].id] || {
-          data: {},
-          widgets: [],
+    if (!merge) {
+      // Don't change when merged
+      dispatch({
+        type: "CHANGE_CURRENT_SONG",
+        payload: {
+          dashboardData: songIdToDashboard[
+            songList[songList.length - 1].id
+          ] || {
+            data: {},
+            widgets: [],
+          },
         },
-      },
-    });
+      });
+    }
   };
   const onClickSong = () => {
-    dispatch({
-      type: "CHANGE_CURRENT_SONG",
-      payload: { dashboardData: songIdToDashboard[id] },
-    });
+    if (!merge) {
+      // Don't change when merged
+      dispatch({
+        type: "CHANGE_CURRENT_SONG",
+        payload: { dashboardData: songIdToDashboard[id] },
+      });
+    }
   };
   const activeDiscShadow =
     merge || currentSongId === id ? `0px 0px 15px 0 ${color}` : "none";

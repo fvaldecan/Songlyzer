@@ -1,4 +1,4 @@
-const initalState = {};
+const initalState = { mergedDashboard: { data: {}, widgets: [] } };
 const ADD_TO_MAP = "ADD_TO_MAP";
 const REMOVE_FROM_MAP = "REMOVE_FROM_MAP";
 const songIdToDashboardReducer = (state = initalState, action) => {

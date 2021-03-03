@@ -45,7 +45,7 @@ const Dashboard = () => {
   const name = data.name;
   const color = data.color;
   const artist_name = data.artists ? data.artists[0].name : "";
-  console.log(merge);
+
   return (
     <main>
       <DashboardButtons />

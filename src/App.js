@@ -10,7 +10,6 @@ const App = () => {
   // const state = useSelector((state) => state);
   // const isSingleState = useSelector();
   const { showModal, modalType } = useSelector((state) => state.modal);
-  console.log(showModal, modalType);
   return (
     <div className="main-container">
       <Sidebar />

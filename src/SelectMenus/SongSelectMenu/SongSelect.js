@@ -13,6 +13,7 @@ const SongSelect = () => {
   const [selectedTracks, setSelectedTracks] = useState([]);
   const [error, setError] = useState("");
   const songList = useSelector((state) => state.songList);
+  const { merge } = useSelector((state) => state.dashboardState);
   // const spotifyToken = useSelector((state) => state.token);
   const songIds = songList.map((song) => song.id);
   const dispatch = useDispatch();
@@ -59,7 +60,6 @@ const SongSelect = () => {
     let newSongCount = 0;
     for (let track of newSelectedTracks) {
       // Add track to songIdToDashBoardReducer
-      console.log(track);
       const payload = {
         dashboardData: {
           data: track,
@@ -67,7 +67,8 @@ const SongSelect = () => {
         },
         id: track.id,
       };
-      if (newSongCount === 0) {
+      if (newSongCount === 0 && !merge) {
+        // Don't change when merged
         dispatch({
           type: "CHANGE_CURRENT_SONG",
           payload: { dashboardData: payload.dashboardData },

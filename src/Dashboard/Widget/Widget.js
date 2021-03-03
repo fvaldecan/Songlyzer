@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Bar from "../../Charts/Bar/Bar";
 import PlainText from "../../Charts/PlainText/PlainText";
 import { Colors } from "../../constants";
@@ -8,7 +8,6 @@ const Widget = ({ featuresSelected, visualsSelected }) => {
   let widget;
   let widgetTitle = "";
   const numFeatures = featuresSelected.length;
-  console.log(featuresSelected);
   switch (visualsSelected) {
     case "bar":
       widget = <Bar features={featuresSelected} />;
