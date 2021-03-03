@@ -6,9 +6,12 @@ import { capitalizeFirstLetter, getSpotifyData } from "../../helpers";
 
 const Bar = ({ features }) => {
   //TODO: ONly one feature at a time
-  const dashboardState = useSelector((state) => state.dashboardState);
+  const { merge } = useSelector((state) => state.dashboardState);
   const songList = useSelector((state) => state.songList);
-  const state = dashboardState.merge
+  const { data } = useSelector((state) => state.currentSong);
+  console.log("Creating Bar...");
+
+  const state = merge
     ? {
         labels: songList.map((song) => song.name),
         datasets: [
@@ -19,7 +22,19 @@ const Bar = ({ features }) => {
           },
         ],
       }
-    : {};
+    : {
+        labels: features.length > 1 ? features.map((feature) => feature) : [""],
+        datasets: [
+          {
+            label: capitalizeFirstLetter(features[0]),
+            backgroundColor: data.color,
+            data:
+              features.length > 1
+                ? features.map((feature) => data[feature])
+                : [data[features[0]]],
+          },
+        ],
+      };
   const options = {
     title: {
       display: true,

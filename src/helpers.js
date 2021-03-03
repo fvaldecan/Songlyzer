@@ -1,7 +1,5 @@
 import { STOP_WORDS, pitch_class } from "./constants";
 export const getSpotifyData = (data, featureKey) => {
-  console.log(data);
-  console.log(featureKey);
   const featureToSpotifyKeyMap = {
     // Only contains those features that aren't matched to spotify keys e.g track_number is named the same
     // as a key in the Spotify. E.g song_title is matched with the key 'name' meaning the song name in Spotify Data

@@ -31,10 +31,15 @@ const DashboardButtons = () => {
   // TODO: AUTO_FILL AND CLEAR FOR WHEN IT'S MERGED
   const dispatch = useDispatch();
   const currentSong = useSelector((state) => state.currentSong);
+  const { mergedDashboard } = useSelector((state) => state.songIdToDashboard);
   const handleMergeToggle = () => {
     console.log("Merging Data...");
     dispatch({
       type: "TOGGLE_MERGE",
+    });
+    dispatch({
+      type: "CHANGE_CURRENT_SONG",
+      payload: { id: "mergedDashboard", dashboardData: mergedDashboard },
     });
   };
   const handleAutofill = () => {
@@ -47,6 +52,16 @@ const DashboardButtons = () => {
   const handleClear = () => {
     console.log("Clearing widgets...");
     if (currentSong.widgets.length < 1) return;
+    dispatch({
+      type: "ADD_TO_MAP",
+      payload: {
+        id: currentSong.id,
+        dashboardData: {
+          data: currentSong.data,
+          widgets: [],
+        },
+      },
+    });
     dispatch({
       type: "CLEAR",
     });
@@ -68,9 +83,6 @@ const DashboardButtons = () => {
         handleOnClick={handleClear}
         className={"clear-button"}
       />
-      {/* <button>Single/Merge Toggle</button>
-      <button>Autofill Button</button>
-      <button>Clear Button</button> */}
     </div>
   );
 };
